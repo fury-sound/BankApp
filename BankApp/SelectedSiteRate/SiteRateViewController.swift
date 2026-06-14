@@ -202,17 +202,22 @@ final class SiteRateViewController: UIViewController {
         let addressStr = "Беларусь, " + "\(branchData.locationType) \(branchData.location), \(branchData.streetType) \(branchData.street), \(branchData.building)"
 //        print(addressStr)
         guard let branchNumberStr = branchNumber.text else { return }
-        viewModel.showLocation(branchNumber: branchNumberStr, addressStr: addressStr, mapView: mapView) { [weak self] location in
+        viewModel.showLocation(branchNumber: branchNumberStr, addressStr: addressStr, mapView: mapView) { [weak self] coordinate in
             DispatchQueue.main.async {
                 guard let self else { return }
-                if let location {
-                    self.locationCoordinates.text = "Координаты: \(location)"
+                if let coordinate {
+//                    let coordinate = location.coordinate
+                    self.locationCoordinates.text = String(
+                        format: "Координаты: %.5f, %.5f",
+                        coordinate.latitude,
+                        coordinate.longitude
+                    )
                 } else {
                     self.locationCoordinates.text = "Координаты не найдены"
                 }
             }
         }
-        print("viewModel.locationString", viewModel.locationString)
+        print("viewModel.locationCoordinates", viewModel.locationCoordinates)
         address.text = "Адрес: " + addressStr
         let hours = branchData.workHours.trimmingCharacters(in: .whitespaces).split(separator: "|").joined(separator: "\n")
             //        print(hours)

@@ -46,8 +46,8 @@
             filePath = "BankApp/SelectedSiteRate/SiteRateViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "showLocation(branchNumber:addressStr:mapView:completion:)"
             landmarkType = "7">
          </BreakpointContent>

@@ -10,7 +10,8 @@ import MapKit
 
 final class SiteRateViewModel {
     let geoCoder = CLGeocoder()
-    var locationString: String?
+//    var locationString: String?
+    var locationCoordinates: CLLocationCoordinate2D?
     private var isGeocoding = false
 
     var siteRateInfo = RateViewModel(
@@ -27,7 +28,8 @@ final class SiteRateViewModel {
         branchNumber: String,
         addressStr: String,
         mapView: MKMapView,
-        completion: @escaping (String?) -> Void
+        completion: @escaping (CLLocationCoordinate2D?) -> Void
+//        completion: @escaping (String?) -> Void
     ) {
         if isGeocoding {
             print("Geocoding in progress")
@@ -55,15 +57,17 @@ final class SiteRateViewModel {
                 return
             }
             let coord = location.coordinate
-            self.locationString = "\(coord.latitude), \(coord.longitude)"
-            completion(locationString)
+            self.locationCoordinates = location.coordinate
+            completion(locationCoordinates)
+            //            self.locationString = "\(coord.latitude), \(coord.longitude)"
+//            completion(locationString)
 //            else {
 //                print("Ошибка геолокации", error?.localizedDescription)
 //                return
 //            }
 //            print("latitude, longitude", coord.latitude, coord.longitude)
-            print("latitude, longitude: \(coord.latitude), \(coord.longitude)")
-            print("self.locationString in VM:", self.locationString)
+//            print("latitude, longitude: \(coord.latitude), \(coord.longitude)")
+//            print("self.locationString in VM:", self.locationString)
             let annotation = MKPointAnnotation()
             annotation.title = branchNumber
             annotation.subtitle = addressStr
