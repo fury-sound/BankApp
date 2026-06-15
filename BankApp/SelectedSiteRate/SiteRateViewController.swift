@@ -1,9 +1,9 @@
-    //
-    //  SiteRateViewController.swift
-    //  BankApp
-    //
-    //  Created by Valery Zvonarev on 19.05.2026.
-    //
+//
+//  SiteRateViewController.swift
+//  BankApp
+//
+//  Created by Valery Zvonarev on 19.05.2026.
+//
 
 import UIKit
 import MapKit
@@ -12,21 +12,21 @@ import SwiftUI
 
 final class SiteRateViewController: UIViewController {
 
-        // MARK: - Properties
+    // MARK: - Properties
     private var viewModel = SiteRateViewModel()
 
-        // MARK: - Subviews
+    // MARK: - Subviews
     private let mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.showsUserLocation = true
         mapView.showsScale = true
         mapView.showsCompass = true
-            //        mapView.pointOfInterestFilter = .excludingAll // deprecated
-            //        mapView.mapType = .standard //deprecated MKMapConfiguration
-            //        mapView.showsTraffic = true
+        //        mapView.pointOfInterestFilter = .excludingAll // deprecated
+        //        mapView.mapType = .standard //deprecated MKMapConfiguration
+        //        mapView.showsTraffic = true
         mapView.showsBuildings = true
-            //        mapView.isRotateEnabled = true
-            //        mapView.isZoomEnabled = true
+        //        mapView.isRotateEnabled = true
+        //        mapView.isZoomEnabled = true
 
         return mapView
     }()
@@ -84,7 +84,7 @@ final class SiteRateViewController: UIViewController {
     }()
 
     private let timeStack: UIStackView = {
-            //        let stack = UIStackView(arrangedSubviews: [workingHoursLabel, workingHours])
+        //        let stack = UIStackView(arrangedSubviews: [workingHoursLabel, workingHours])
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .horizontal
@@ -95,7 +95,7 @@ final class SiteRateViewController: UIViewController {
     }()
 
     private let rateStack: UIStackView = {
-            //        let stack = UIStackView(arrangedSubviews: [ratePair, rateLabel])
+        //        let stack = UIStackView(arrangedSubviews: [ratePair, rateLabel])
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
@@ -116,25 +116,25 @@ final class SiteRateViewController: UIViewController {
         return label
     }()
 
-        //    init(viewModel: SiteRateViewModel = SiteRateViewModel()) {
-        //        self.viewModel = viewModel
-        //    }
-        //
-        //    required init?(coder: NSCoder) {
-        //        fatalError("init(coder:) has not been implemented")
-        //    }
+    //    init(viewModel: SiteRateViewModel = SiteRateViewModel()) {
+    //        self.viewModel = viewModel
+    //    }
+    //
+    //    required init?(coder: NSCoder) {
+    //        fatalError("init(coder:) has not been implemented")
+    //    }
 
-        // MARK: - Lifecycles
+    // MARK: - Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
-            // Do any additional setup after loading the view.
+        // Do any additional setup after loading the view.
         setupViewProperties()
         setupSubviews()
         setupConstraints()
         configure(branchData: viewModel.siteRateInfo)
     }
 
-        // MARK: - Layout
+    // MARK: - Layout
     private func setupViewProperties() {
         view.backgroundColor = .systemBackground
     }
@@ -147,7 +147,7 @@ final class SiteRateViewController: UIViewController {
         mapView.preferredConfiguration = configuration
         timeStack.addArrangedSubview(workingHoursLabel)
         timeStack.addArrangedSubview(workingHours)
-            //        rateStack.addArrangedSubview(ra)
+        //        rateStack.addArrangedSubview(ra)
         [branchNumber, exchangeLabel, rateStack, address, timeStack, locationCoordinates, mapView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -200,42 +200,86 @@ final class SiteRateViewController: UIViewController {
         }
 
         let addressStr = "Беларусь, " + "\(branchData.locationType) \(branchData.location), \(branchData.streetType) \(branchData.street), \(branchData.building)"
-//        print(addressStr)
-        guard let branchNumberStr = branchNumber.text else { return }
-        viewModel.showLocation(branchNumber: branchNumberStr, addressStr: addressStr, mapView: mapView) { [weak self] coordinate in
+        //        print(addressStr)
+        //        guard let branchNumberStr = branchNumber.text else { return }
+        //        viewModel.showLocation(branchNumber: branchNumberStr, addressStr: addressStr, mapView: mapView) { [weak self] coordinate in
+        //            DispatchQueue.main.async {
+        //                guard let self else { return }
+        //                if let coordinate {
+        ////                    let coordinate = location.coordinate
+        //                    self.locationCoordinates.text = String(
+        //                        format: "Координаты: %.5f, %.5f",
+        //                        coordinate.latitude,
+        //                        coordinate.longitude
+        //                    )
+        //                } else {
+        //                    self.locationCoordinates.text = "Координаты не найдены"
+        //                }
+        //            }
+        //        }
+        //        print("viewModel.locationCoordinates", viewModel.locationCoordinates)
+        address.text = "Адрес: " + addressStr
+        let hours = branchData.workHours.trimmingCharacters(in: .whitespaces).split(separator: "|").joined(separator: "\n")
+        //        print(hours)
+        workingHoursLabel.text = "Часы работы:"
+        workingHours.text = hours
+        loadCoordinates(for: addressStr)
+        //        guard let location = viewModel.locationString else {
+        //            print("nil in viewModel.locationString")
+        //            return
+        //        }
+        //        locationCoordinates.text = "Координаты:" + location
+    }
+
+    private func loadCoordinates(for address: String) {
+        viewModel.geocodeAddress(address) { [weak self] result in
+            guard let self else { return }
             DispatchQueue.main.async {
-                guard let self else { return }
-                if let coordinate {
-//                    let coordinate = location.coordinate
-                    self.locationCoordinates.text = String(
-                        format: "Координаты: %.5f, %.5f",
-                        coordinate.latitude,
-                        coordinate.longitude
-                    )
-                } else {
-                    self.locationCoordinates.text = "Координаты не найдены"
+                switch result {
+                    case .success(let coordinate):
+//                        self.locationCoordinates.text = "Координаты: \(coordinate.latitude), \(coordinate.longitude)"
+                        self.locationCoordinates.text = String(
+                            format: "Координаты: %.5f, %.5f",
+                            coordinate.latitude,
+                            coordinate.longitude
+                        )
+                        self.showPin(
+                            coordinate: coordinate,
+                            title: self.branchNumber.text ?? "Не удалось получить номер отделения",
+                            subtitle: address
+                        )
+                    case .failure(let error):
+                        self.locationCoordinates.text = "Координаты не найдены"
+                        print(error.localizedDescription)
                 }
             }
         }
-        print("viewModel.locationCoordinates", viewModel.locationCoordinates)
-        address.text = "Адрес: " + addressStr
-        let hours = branchData.workHours.trimmingCharacters(in: .whitespaces).split(separator: "|").joined(separator: "\n")
-            //        print(hours)
-        workingHoursLabel.text = "Часы работы:"
-        workingHours.text = hours
-//        guard let location = viewModel.locationString else {
-//            print("nil in viewModel.locationString")
-//            return
-//        }
-//        locationCoordinates.text = "Координаты:" + location
     }
+
+    private func showPin(coordinate: CLLocationCoordinate2D,
+                         title: String,
+                         subtitle: String)  {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = coordinate
+        annotation.title = title
+        annotation.subtitle = subtitle
+        mapView.addAnnotation(annotation)
+        let region = MKCoordinateRegion(
+            center: coordinate,
+            latitudinalMeters: 800,
+            longitudinalMeters: 800
+        )
+        mapView.setRegion(region, animated: true)
+    }
+
+
 
 }
 
-    // MARK: - Actions
-    //    @objc private func didTapButton(){
-    //    }
-    //}
+// MARK: - Actions
+//    @objc private func didTapButton(){
+//    }
+//}
 
 #Preview {
     SiteRateViewController()
