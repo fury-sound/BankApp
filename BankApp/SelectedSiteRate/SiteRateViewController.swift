@@ -14,6 +14,9 @@ final class SiteRateViewController: UIViewController {
 
     // MARK: - Properties
     private var viewModel = SiteRateViewModel()
+    private var bankRates: [RateViewModel] = []
+    private let networkService = NetworkService.shared
+    let activityIndicator = UIActivityIndicatorView(style: .large)
 
     // MARK: - Subviews
     private let mapView: MKMapView = {
@@ -27,7 +30,6 @@ final class SiteRateViewController: UIViewController {
         mapView.showsBuildings = true
         //        mapView.isRotateEnabled = true
         //        mapView.isZoomEnabled = true
-
         return mapView
     }()
 
@@ -84,7 +86,6 @@ final class SiteRateViewController: UIViewController {
     }()
 
     private let timeStack: UIStackView = {
-        //        let stack = UIStackView(arrangedSubviews: [workingHoursLabel, workingHours])
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .horizontal
@@ -95,7 +96,6 @@ final class SiteRateViewController: UIViewController {
     }()
 
     private let rateStack: UIStackView = {
-        //        let stack = UIStackView(arrangedSubviews: [ratePair, rateLabel])
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .vertical
@@ -116,14 +116,6 @@ final class SiteRateViewController: UIViewController {
         return label
     }()
 
-    //    init(viewModel: SiteRateViewModel = SiteRateViewModel()) {
-    //        self.viewModel = viewModel
-    //    }
-    //
-    //    required init?(coder: NSCoder) {
-    //        fatalError("init(coder:) has not been implemented")
-    //    }
-
     // MARK: - Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -131,7 +123,7 @@ final class SiteRateViewController: UIViewController {
         setupViewProperties()
         setupSubviews()
         setupConstraints()
-        configure(branchData: viewModel.siteRateInfo)
+        fetchRates()
     }
 
     // MARK: - Layout
@@ -147,7 +139,6 @@ final class SiteRateViewController: UIViewController {
         mapView.preferredConfiguration = configuration
         timeStack.addArrangedSubview(workingHoursLabel)
         timeStack.addArrangedSubview(workingHours)
-        //        rateStack.addArrangedSubview(ra)
         [branchNumber, exchangeLabel, rateStack, address, timeStack, locationCoordinates, mapView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
@@ -185,7 +176,6 @@ final class SiteRateViewController: UIViewController {
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             mapView.heightAnchor.constraint(equalToConstant: 200),
             mapView.widthAnchor.constraint(equalToConstant: 200)
-
         ])
     }
 
@@ -200,35 +190,36 @@ final class SiteRateViewController: UIViewController {
         }
 
         let addressStr = "Беларусь, " + "\(branchData.locationType) \(branchData.location), \(branchData.streetType) \(branchData.street), \(branchData.building)"
-        //        print(addressStr)
-        //        guard let branchNumberStr = branchNumber.text else { return }
-        //        viewModel.showLocation(branchNumber: branchNumberStr, addressStr: addressStr, mapView: mapView) { [weak self] coordinate in
-        //            DispatchQueue.main.async {
-        //                guard let self else { return }
-        //                if let coordinate {
-        ////                    let coordinate = location.coordinate
-        //                    self.locationCoordinates.text = String(
-        //                        format: "Координаты: %.5f, %.5f",
-        //                        coordinate.latitude,
-        //                        coordinate.longitude
-        //                    )
-        //                } else {
-        //                    self.locationCoordinates.text = "Координаты не найдены"
-        //                }
-        //            }
-        //        }
-        //        print("viewModel.locationCoordinates", viewModel.locationCoordinates)
         address.text = "Адрес: " + addressStr
+//        print(branchData.workHours)
         let hours = branchData.workHours.trimmingCharacters(in: .whitespaces).split(separator: "|").joined(separator: "\n")
-        //        print(hours)
         workingHoursLabel.text = "Часы работы:"
         workingHours.text = hours
         loadCoordinates(for: addressStr)
-        //        guard let location = viewModel.locationString else {
-        //            print("nil in viewModel.locationString")
-        //            return
-        //        }
-        //        locationCoordinates.text = "Координаты:" + location
+    }
+
+    private func fetchRates() {
+        //        print(#function)
+        bankRates = []
+        activityIndicator.startAnimating()
+        //        networkService.fetch(endpoint: .news) { [weak self] result in
+        networkService.fetchRate { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                    case .success(let bankRatesAll):
+                        self?.bankRates = bankRatesAll
+//                        guard let bankRatesCurrent = bankRatesAll else { return }
+                        print(bankRatesAll.count)
+                        print(bankRatesAll[0].branchNumber)
+                        print(bankRatesAll[0].location)
+                        self?.viewModel.siteRateInfo = bankRatesAll[0]
+                        self?.configure(branchData: bankRatesAll[0])
+                    case .failure(let error):
+                        print(error)
+                }
+                self?.activityIndicator.stopAnimating()
+            }
+        }
     }
 
     private func loadCoordinates(for address: String) {
@@ -266,14 +257,11 @@ final class SiteRateViewController: UIViewController {
         mapView.addAnnotation(annotation)
         let region = MKCoordinateRegion(
             center: coordinate,
-            latitudinalMeters: 800,
-            longitudinalMeters: 800
+            latitudinalMeters: 500,
+            longitudinalMeters: 500
         )
         mapView.setRegion(region, animated: true)
     }
-
-
-
 }
 
 // MARK: - Actions

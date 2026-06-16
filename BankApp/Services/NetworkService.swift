@@ -11,6 +11,10 @@ struct News: Codable {
     let news: [NewsCellModel]
 }
 
+struct RateView: Codable {
+    let rateView: [RateViewModel]
+}
+
 enum NetworkServiceError: Error {
     case invalidURL                 // некорректный URL
     case invalidResponse            // пустой/некорректный ответ
@@ -47,6 +51,47 @@ final class NetworkService {
         session = URLSession(configuration: configuration)
     }
     
+    func fetchRate(completion: @escaping (Result<[RateViewModel], Error>) -> Void) {
+//    func fetch<T: Decodable>(_ type: T.Type, from url: URL, completion: @escaping (Result<T, Error>) -> Void) {
+//        URLSession.shared.dataTask(with: url) { [self] data, response, error in
+//        URLSession.shared.dataTask(with: url) { data, _, _ in
+        print("in", #function )
+            guard let url = URL(string: "\(baseURL)/kursExchange?city=Минск") else {
+                completion(.failure(NetworkServiceError.invalidURL))
+                return
+            }
+        print("url", url)
+            let task = session.dataTask(with: url) { data, response, error in
+                if let error {
+                    completion(.failure(NetworkServiceError.networkError(error)))
+                    return
+                }
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    completion(.failure(NetworkServiceError.invalidResponse))
+                    return
+                }
+
+                guard (200..<300).contains(httpResponse.statusCode) else {
+                    completion(.failure(NetworkServiceError.httpError(statusCode: httpResponse.statusCode)))
+                    return
+                }
+
+                guard let data else {
+                    completion(.failure(NetworkServiceError.invalidResponse))
+                    return
+                }
+
+                do {
+                    let decoder = JSONDecoder()
+                    let allRates = try decoder.decode([RateViewModel].self, from: data)
+                    completion(.success(allRates))
+                } catch {
+                    completion(.failure(NetworkServiceError.decodingError(error)))
+                }
+            }
+        task.resume()
+    }
+
     func fetch(completion: @escaping (Result<[NewsCellModel], Error>) -> Void) {
 //    func fetch<T: Decodable>(_ type: T.Type, from url: URL, completion: @escaping (Result<T, Error>) -> Void) {
 //        URLSession.shared.dataTask(with: url) { [self] data, response, error in
