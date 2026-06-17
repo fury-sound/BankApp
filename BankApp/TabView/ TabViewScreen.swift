@@ -41,6 +41,20 @@ final class TabViewScreen: UITabBarController {
 
 //        mainNav.navigationBar.prefersLargeTitles = true
 
+        let rateVC = SiteRateViewController()
+        rateVC.tabBarItem = UITabBarItem(
+            title: "Курсы обмена",
+//            image: UIImage(systemName:  "gear"),
+            image: UIImage(systemName: "banknote") ,
+            selectedImage: UIImage(systemName: "banknote.fill")
+        )
+        rateVC.title = "Курсы обмена"
+//        settingsVC.navigationItem.largeTitleDisplayMode = .always
+        rateVC.tabBarItem.tag = 1
+        let rateNav = UINavigationController(rootViewController: rateVC)
+        rateNav.navigationBar.standardAppearance = appearance
+        rateNav.navigationBar.scrollEdgeAppearance = appearance
+
         let settingsVC = SettingsPageViewController()
         settingsVC.tabBarItem = UITabBarItem(
             title: "Настройки",
@@ -49,13 +63,14 @@ final class TabViewScreen: UITabBarController {
         )
         settingsVC.title = "Настройки"
 //        settingsVC.navigationItem.largeTitleDisplayMode = .always
-        settingsVC.tabBarItem.tag = 1
+        settingsVC.tabBarItem.tag = 2
         let settingsNav = UINavigationController(rootViewController: settingsVC)
         settingsNav.navigationBar.standardAppearance = appearance
         settingsNav.navigationBar.scrollEdgeAppearance = appearance
 
         viewControllers = [
             mainNav,
+            rateNav,
             settingsNav
         ]
     }

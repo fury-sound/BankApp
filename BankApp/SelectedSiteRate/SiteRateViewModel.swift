@@ -13,6 +13,7 @@ final class SiteRateViewModel {
     //    var locationString: String?
     var locationCoordinates: CLLocationCoordinate2D?
     private var isGeocoding = false
+    var bankRatesAll: [RateViewModel] = []
 
     var siteRateInfo = RateViewModel(
         usdIn: "2.7700", usdOut: "2.8150",
@@ -34,6 +35,17 @@ final class SiteRateViewModel {
     //            }
     //        }
     //    }
+
+    func makeCityList(from allRateList: [RateViewModel]) {
+        var cityList: [String] = []
+        allRateList.forEach {
+            if !cityList.contains($0.location) {
+                cityList.append($0.location)
+            }
+        }
+//        cityList.removeFirst()
+        print(cityList)
+    }
 
     func geocodeAddress (
         _ address: String,

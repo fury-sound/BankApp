@@ -56,7 +56,8 @@ final class NetworkService {
 //        URLSession.shared.dataTask(with: url) { [self] data, response, error in
 //        URLSession.shared.dataTask(with: url) { data, _, _ in
         print("in", #function )
-            guard let url = URL(string: "\(baseURL)/kursExchange?city=Минск") else {
+//            guard let url = URL(string: "\(baseURL)/kursExchange?city=Минск") else {
+            guard let url = URL(string: "\(baseURL)/kursExchange") else {
                 completion(.failure(NetworkServiceError.invalidURL))
                 return
             }

@@ -14,7 +14,7 @@ final class SiteRateViewController: UIViewController {
 
     // MARK: - Properties
     private var viewModel = SiteRateViewModel()
-    private var bankRates: [RateViewModel] = []
+//    private var bankRates: [RateViewModel] = []
     private let networkService = NetworkService.shared
     let activityIndicator = UIActivityIndicatorView(style: .large)
 
@@ -116,6 +116,23 @@ final class SiteRateViewController: UIViewController {
         return label
     }()
 
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemBackground
+//        scrollView.isScrollEnabled = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
+        return scrollView
+    }()
+
+    private let contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemBackground
+        return view
+    }()
+
     // MARK: - Lifecycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -139,7 +156,13 @@ final class SiteRateViewController: UIViewController {
         mapView.preferredConfiguration = configuration
         timeStack.addArrangedSubview(workingHoursLabel)
         timeStack.addArrangedSubview(workingHours)
-        [branchNumber, exchangeLabel, rateStack, address, timeStack, locationCoordinates, mapView].forEach {
+        [exchangeLabel, rateStack, address, timeStack, locationCoordinates, mapView].forEach {
+//        [exchangeLabel, rateStack].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            contentView.addSubview($0)
+        }
+        scrollView.addSubview(contentView)
+        [branchNumber, scrollView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -149,33 +172,46 @@ final class SiteRateViewController: UIViewController {
         NSLayoutConstraint.activate([
             branchNumber.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             branchNumber.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            branchNumber.bottomAnchor.constraint(equalTo: exchangeLabel.topAnchor, constant: -30),
+            branchNumber.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
 
-            exchangeLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            exchangeLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            exchangeLabel.bottomAnchor.constraint(equalTo: rateStack.topAnchor, constant: -10),
+            contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
 
-            rateStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            rateStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            rateStack.bottomAnchor.constraint(equalTo: address.topAnchor, constant: -10),
+            scrollView.topAnchor.constraint(equalTo: branchNumber.bottomAnchor, constant: 10),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
 
-            address.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            address.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            address.bottomAnchor.constraint(equalTo: workingHours.topAnchor, constant: -10),
+            exchangeLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            exchangeLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            exchangeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
 
-            timeStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            timeStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            timeStack.bottomAnchor.constraint(equalTo: locationCoordinates.topAnchor, constant: -10),
+            rateStack.topAnchor.constraint(equalTo: exchangeLabel.bottomAnchor, constant: 10),
+            rateStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            rateStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
 
-            locationCoordinates.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            locationCoordinates.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            locationCoordinates.bottomAnchor.constraint(equalTo: mapView.topAnchor, constant: -10),
+            address.topAnchor.constraint(equalTo: rateStack.bottomAnchor, constant: 10),
+            address.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            address.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+
+            timeStack.topAnchor.constraint(equalTo: address.bottomAnchor, constant: 10),
+            timeStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            timeStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+
+            locationCoordinates.topAnchor.constraint(equalTo: timeStack.bottomAnchor, constant: 10),
+            locationCoordinates.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            locationCoordinates.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             locationCoordinates.heightAnchor.constraint(equalToConstant: 30),
 
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            mapView.topAnchor.constraint(equalTo: locationCoordinates.bottomAnchor, constant: 10),
+            mapView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             mapView.heightAnchor.constraint(equalToConstant: 200),
-            mapView.widthAnchor.constraint(equalToConstant: 200)
+//            mapView.widthAnchor.constraint(equalToConstant: 200)
         ])
     }
 
@@ -200,14 +236,15 @@ final class SiteRateViewController: UIViewController {
 
     private func fetchRates() {
         //        print(#function)
-        bankRates = []
+        //        bankRates = []
         activityIndicator.startAnimating()
         //        networkService.fetch(endpoint: .news) { [weak self] result in
         networkService.fetchRate { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                     case .success(let bankRatesAll):
-                        self?.bankRates = bankRatesAll
+                        self?.viewModel.bankRatesAll = bankRatesAll
+                        self?.viewModel.makeCityList(from: bankRatesAll)
 //                        guard let bankRatesCurrent = bankRatesAll else { return }
                         print(bankRatesAll.count)
                         print(bankRatesAll[0].branchNumber)
