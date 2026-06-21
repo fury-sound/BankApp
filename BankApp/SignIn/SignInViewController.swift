@@ -16,12 +16,11 @@ final class SignInViewController: UIViewController {
     private lazy var appLabel: UILabel = {
         let label = UILabel()
         label.text = "РЕГИСТРАЦИЯ"
-        label.font = .systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .white
-        label.backgroundColor = .black
+        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.textColor = .label
+//        label.backgroundColor = .black
         label.textAlignment = .center
         label.numberOfLines = 1
-        label.layer.cornerRadius = 20
         return label
     }()
 
@@ -116,107 +115,130 @@ final class SignInViewController: UIViewController {
 */
     private lazy var userLogin: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Логин"
+        textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .next
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
 
     private lazy var userPassword: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Пароль"
+        textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .next
 //        textField.isSecureTextEntry = true
-        textField.autocorrectionType = .no
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
 
     private lazy var userPasswordConfirm: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Подтверждение пароля"
+        textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .go
 //        textField.isSecureTextEntry = true
-        textField.autocorrectionType = .no
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
-
+/*
     private lazy var userName: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "ФИО"
+        textField.font = .systemFont(ofSize: 16)
         textField.clearButtonMode = .whileEditing
-        textField.returnKeyType = .next
-        textField.isSecureTextEntry = true
         textField.autocorrectionType = .no
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.returnKeyType = .next
+//        textField.isSecureTextEntry = true
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
 
     private lazy var userEmail: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Электронная почта"
+        textField.font = .systemFont(ofSize: 16)
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .next
-        textField.isSecureTextEntry = true
-        textField.autocorrectionType = .no
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+//        textField.isSecureTextEntry = true
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
 
     private lazy var userPhone: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Телефон"
+        textField.font = .systemFont(ofSize: 16)
+        textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .go
-        textField.isSecureTextEntry = true
-        textField.autocorrectionType = .no
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+//        textField.isSecureTextEntry = true
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
-
+*/
     private lazy var signInButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Зарегистрироваться", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemGray
-//        button.backgroundColor = .systemBlue
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.black.cgColor
-        button.layer.cornerRadius = 12
+//        let button = UIButton(type: .system)
+//        button.setTitle("Зарегистрироваться", for: .normal)
+//        button.setTitleColor(.white, for: .normal)
+//        button.backgroundColor = .systemGray
+////        button.backgroundColor = .systemBlue
+//        button.layer.borderWidth = 1
+//        button.layer.borderColor = UIColor.black.cgColor
+//        button.layer.cornerRadius = 12
+        var config = UIButton.Configuration.filled()
+        config.title = "Зарегистрироваться"
+        config.baseBackgroundColor = .systemBlue
+        config.baseForegroundColor = .white
+        config.cornerStyle = .medium
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .systemFont(ofSize: 16, weight: .semibold)
+            return outgoing
+        }
+        let button = UIButton(configuration: config, primaryAction: nil)
         button.isEnabled = false
         return button
     }()

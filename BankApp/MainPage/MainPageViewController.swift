@@ -130,7 +130,7 @@ final class MainPageViewController: UIViewController {
 //                        print(bankNews[0].imageName)
                         self?.newsTableView.reloadData()
                     case .failure(let error):
-                        print(error)
+                        print(error.localizedDescription)
                 }
                 self?.activityIndicator.stopAnimating()
             }

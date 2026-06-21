@@ -18,57 +18,64 @@ final class SignUpViewController: UIViewController {
     private lazy var appLabel: UILabel = {
         let label = UILabel()
         label.text = "Мой банк"
-        label.font = .systemFont(ofSize: 32, weight: .bold)
-        label.textColor = .systemBackground
-        label.backgroundColor = .label
+        label.font = .systemFont(ofSize: 34, weight: .bold)
+        label.textColor = .label
+//        label.backgroundColor = .label
         label.textAlignment = .center
         label.numberOfLines = 1
-        label.layer.cornerRadius = 20
+//        label.layer.cornerRadius = 20
         return label
     }()
 
     lazy var userName: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Имя пользователя"
+        textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .next
-            //        textField.becomeFirstResponder()
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
 
     lazy var userPassword: UITextField = {
         let textField = UITextField()
-        textField.backgroundColor = .systemBackground
+        textField.backgroundColor = .systemGray6
         textField.placeholder = "Пароль"
+        textField.font = .systemFont(ofSize: 16)
         textField.autocapitalizationType = .none
         textField.autocorrectionType = .no
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .go
-            //        textField.becomeFirstResponder()
         textField.isSecureTextEntry = true
-        textField.autocorrectionType = .no
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 8
-        textField.layer.borderWidth = 1
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.borderStyle = .none
+        textField.layer.cornerRadius = 12
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 50))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
         return textField
     }()
 
     private lazy var enterButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Войти в приложение", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .systemBlue
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.black.cgColor
-        button.layer.cornerRadius = 12
+        var config = UIButton.Configuration.filled()
+        config.title = "Войти в приложение"
+        config.baseBackgroundColor = .systemBlue
+        config.baseForegroundColor = .white
+        config.cornerStyle = .medium
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .systemFont(ofSize: 16, weight: .semibold)
+            return outgoing
+        }
+        let button = UIButton(configuration: config, primaryAction: nil)
+
+//        let button = UIButton(type: .system)
         return button
     }()
 
@@ -117,7 +124,7 @@ final class SignUpViewController: UIViewController {
 
         // MARK: - Layout
     private func setupViewProperties() {
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .systemBackground
     }
 
     private func setupSubviews() {
@@ -138,27 +145,29 @@ final class SignUpViewController: UIViewController {
     private func setupConstraints() {
 //        signInButtonBottomConstraint = signInButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30)
         NSLayoutConstraint.activate([
-            appLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            appLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 45),
-            appLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -45),
-            appLabel.heightAnchor.constraint(equalToConstant: 50),
-            userName.topAnchor.constraint(equalTo: appLabel.bottomAnchor, constant: 50),
-            userName.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            userName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            userName.heightAnchor.constraint(equalToConstant: 50),
-            userPassword.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 30),
-            userPassword.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            userPassword.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            userPassword.heightAnchor.constraint(equalToConstant: 50),
-            enterButton.topAnchor.constraint(equalTo: userPassword.bottomAnchor, constant: 30),
-            enterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            enterButton.widthAnchor.constraint(equalToConstant: 200),
-            enterButton.heightAnchor.constraint(equalToConstant: 50),
+            appLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            appLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            appLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+//            appLabel.heightAnchor.constraint(equalToConstant: 50),
+            userName.topAnchor.constraint(equalTo: appLabel.bottomAnchor, constant: 40),
+            userName.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            userName.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            userName.heightAnchor.constraint(equalToConstant: 52),
+            userPassword.topAnchor.constraint(equalTo: userName.bottomAnchor, constant: 16),
+            userPassword.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            userPassword.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            userPassword.heightAnchor.constraint(equalToConstant: 52),
+            enterButton.topAnchor.constraint(equalTo: userPassword.bottomAnchor, constant: 24),
+            enterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            enterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+//            enterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            enterButton.widthAnchor.constraint(equalToConstant: 200),
+            enterButton.heightAnchor.constraint(equalToConstant: 52),
 //                        signInButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
             switchSignInView.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -20),
             switchSignInView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             switchSignInView.widthAnchor.constraint(equalToConstant: 200),
-            switchSignInView.heightAnchor.constraint(equalToConstant: 50)
+            switchSignInView.heightAnchor.constraint(equalToConstant: 44)
         ])
     }
 
@@ -196,7 +205,7 @@ final class SignUpViewController: UIViewController {
     }
 
     private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
     }

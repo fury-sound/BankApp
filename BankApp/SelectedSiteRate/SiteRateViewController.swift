@@ -108,10 +108,10 @@ final class SiteRateViewController: UIViewController {
     private let locationCoordinates: UILabel = {
         let label = UILabel()
         label.textAlignment = .left
-        label.text = "Координаты: 111.111, 111.111"
+        label.text = "Координаты: не определено"
         label.font = .systemFont(ofSize: 16, weight: .regular)
         label.numberOfLines = 1
-        label.layer.cornerRadius = 10
+//        label.layer.cornerRadius = 12
         label.backgroundColor = .systemBackground
         return label
     }()
@@ -156,13 +156,16 @@ final class SiteRateViewController: UIViewController {
         mapView.preferredConfiguration = configuration
         timeStack.addArrangedSubview(workingHoursLabel)
         timeStack.addArrangedSubview(workingHours)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .red
+        activityIndicator.hidesWhenStopped = true
         [exchangeLabel, rateStack, address, timeStack, locationCoordinates, mapView].forEach {
 //        [exchangeLabel, rateStack].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
         }
         scrollView.addSubview(contentView)
-        [branchNumber, scrollView].forEach {
+        [branchNumber, scrollView, activityIndicator].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -211,6 +214,8 @@ final class SiteRateViewController: UIViewController {
             mapView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
             mapView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
             mapView.heightAnchor.constraint(equalToConstant: 200),
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
 //            mapView.widthAnchor.constraint(equalToConstant: 200)
         ])
     }

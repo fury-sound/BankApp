@@ -21,6 +21,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.windowScene = windowScene
 
+//        guard let windowScene = (scene as? UIWindowScene) else { return }
+//        let window = UIWindow(windowScene: windowScene)
+//        window.rootViewController = SignUpViewController()
+//        self.window = window
+//        window.makeKeyAndVisible()
+
         //        let vc = MainViewController()
 //        if UserDefaults.standard.string(forKey: "currentTheme") != nil {
             switch UserDefaults.standard.string(forKey: "selectedTheme") {
