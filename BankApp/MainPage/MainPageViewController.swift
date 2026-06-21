@@ -36,6 +36,14 @@ final class MainPageViewController: UIViewController {
 //        return label
 //    }()
 
+    private lazy var noConnectionView: NoConnectionView = {
+        let errorView = NoConnectionView()
+        errorView.translatesAutoresizingMaskIntoConstraints = false
+        errorView.isHidden = true
+        errorView.reloadButton.addTarget(self, action: #selector(retryNetworkCall), for: .touchUpInside)
+        return errorView
+    }()
+
     private lazy var titleView: UIView = {
         let myView = UIView()
         myView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,6 +71,7 @@ final class MainPageViewController: UIViewController {
         setupViewProperties()
         setupSubviews()
         setupConstraints()
+        setupConnectionErrorView()
 //        updateBorderColor()
         fetchNews()
     }
@@ -74,6 +83,17 @@ final class MainPageViewController: UIViewController {
 //            updateBorderColor()
 //        }
 //    }
+
+    private func setupConnectionErrorView() {
+        view.addSubview(noConnectionView)
+        noConnectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noConnectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            noConnectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noConnectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noConnectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
 
     private func setupViewProperties() {
         view.backgroundColor = .systemBackground
@@ -88,7 +108,10 @@ final class MainPageViewController: UIViewController {
     private func setupSubviews() {
         newsTableView.delegate = self
         newsTableView.dataSource = self
-        [newsTableView].forEach { view.addSubview($0) }
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.color = .red
+        activityIndicator.hidesWhenStopped = true
+        [newsTableView, activityIndicator].forEach { view.addSubview($0) }
 //        titleView.addSubview(welcomeLabel)
 //        [titleView, newsTableView].forEach { view.addSubview($0) }
     }
@@ -108,7 +131,9 @@ final class MainPageViewController: UIViewController {
             newsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             newsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             newsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            newsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            newsTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
@@ -122,7 +147,7 @@ final class MainPageViewController: UIViewController {
                 switch result {
                     case .success(let news):
                         self?.bankNews = news
-                        guard let bankNews = self?.bankNews else { return }
+//                        guard let bankNews = self?.bankNews else { return }
 //                        print(bankNews.count)
 //                        print(bankNews[0].title)
 //                        print(bankNews[0].mainText)
@@ -131,15 +156,26 @@ final class MainPageViewController: UIViewController {
                         self?.newsTableView.reloadData()
                     case .failure(let error):
                         print(error.localizedDescription)
+                        self?.showConnectionErrorView()
                 }
                 self?.activityIndicator.stopAnimating()
             }
         }
     }
 
+    private func showConnectionErrorView() {
+        noConnectionView.isHidden = false
+        view.bringSubviewToFront(noConnectionView)
+    }
+
     // MARK: - Actions
-    //    @objc private func didTapButton(){
-    //    }
+    @objc private func retryNetworkCall() {
+        print("Повторная попытка подключения к сети")
+        UIView.animate(withDuration: 0.3) {
+            self.noConnectionView.isHidden = true
+        }
+        fetchNews()
+    }
 }
 
 extension MainPageViewController: UITableViewDelegate {

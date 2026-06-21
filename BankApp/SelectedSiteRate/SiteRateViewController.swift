@@ -19,6 +19,15 @@ final class SiteRateViewController: UIViewController {
     let activityIndicator = UIActivityIndicatorView(style: .large)
 
     // MARK: - Subviews
+
+    private lazy var noConnectionView: NoConnectionView = {
+        let errorView = NoConnectionView()
+        errorView.translatesAutoresizingMaskIntoConstraints = false
+        errorView.isHidden = true
+        errorView.reloadButton.addTarget(self, action: #selector(retryNetworkCall), for: .touchUpInside)
+        return errorView
+    }()
+    
     private let mapView: MKMapView = {
         let mapView = MKMapView()
         mapView.showsUserLocation = true
@@ -140,10 +149,22 @@ final class SiteRateViewController: UIViewController {
         setupViewProperties()
         setupSubviews()
         setupConstraints()
+        setupConnectionErrorView()
         fetchRates()
     }
 
     // MARK: - Layout
+    private func setupConnectionErrorView() {
+        view.addSubview(noConnectionView)
+        noConnectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noConnectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            noConnectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noConnectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noConnectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
     private func setupViewProperties() {
         view.backgroundColor = .systemBackground
     }
@@ -257,7 +278,8 @@ final class SiteRateViewController: UIViewController {
                         self?.viewModel.siteRateInfo = bankRatesAll[0]
                         self?.configure(branchData: bankRatesAll[0])
                     case .failure(let error):
-                        print(error)
+                        print(error.localizedDescription)
+                        self?.showConnectionErrorView()
                 }
                 self?.activityIndicator.stopAnimating()
             }
@@ -304,12 +326,22 @@ final class SiteRateViewController: UIViewController {
         )
         mapView.setRegion(region, animated: true)
     }
-}
 
-// MARK: - Actions
-//    @objc private func didTapButton(){
-//    }
-//}
+    private func showConnectionErrorView() {
+        noConnectionView.isHidden = false
+        view.bringSubviewToFront(noConnectionView)
+    }
+
+    // MARK: - Actions
+    @objc private func retryNetworkCall() {
+        print("Повторная попытка подключения к сети")
+        UIView.animate(withDuration: 0.3) {
+            self.noConnectionView.isHidden = true
+        }
+        fetchRates()
+    }
+
+}
 
 #Preview {
     SiteRateViewController()
