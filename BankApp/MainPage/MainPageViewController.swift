@@ -14,6 +14,7 @@ final class MainPageViewController: UIViewController {
     private let networkService = NetworkService.shared
     private let dateFormatterService = DateFormatterService.shared
     let activityIndicator = UIActivityIndicatorView(style: .large)
+    let viewModel = MainPageViewModel()
 
 //    private let activityIndicator: UIActivityIndicatorView = {
 //        let activityIndicator = UIActivityIndicatorView(style: .large)
@@ -72,8 +73,9 @@ final class MainPageViewController: UIViewController {
         setupSubviews()
         setupConstraints()
         setupConnectionErrorView()
+        bindViewModel()
 //        updateBorderColor()
-        fetchNews()
+        viewModel.fetchNews()
     }
 
     // MARK: - Layout
@@ -83,6 +85,40 @@ final class MainPageViewController: UIViewController {
 //            updateBorderColor()
 //        }
 //    }
+
+    private func bindViewModel() {
+        viewModel.stateDidChange = { [weak self] state in
+            DispatchQueue.main.async {
+                self?.handleState(state)
+            }
+        }
+    }
+
+    private func handleState(_ state: NewsViewState) {
+//        print("in", #function, "state: \(state)")
+//        print("in", #function")
+        switch state {
+            case .idle:
+                break
+            case .loading:
+                activityIndicator.startAnimating()
+                newsTableView.isHidden = true
+                noConnectionView.isHidden = true
+//                showLoading()
+            case .loaded(let news):
+                bankNews = news
+                activityIndicator.stopAnimating()
+                newsTableView.isHidden = false
+                noConnectionView.isHidden = true
+                newsTableView.reloadData()
+//                hideLoading()
+            case .error(let message):
+                activityIndicator.stopAnimating()
+                newsTableView.isHidden = true
+                noConnectionView.isHidden = false
+//                noConnectionView.configure(with: message)
+        }
+    }
 
     private func setupConnectionErrorView() {
         view.addSubview(noConnectionView)
@@ -137,36 +173,36 @@ final class MainPageViewController: UIViewController {
         ])
     }
 
-    private func fetchNews() {
-//        print(#function)
-        bankNews = []
-        activityIndicator.startAnimating()
-//        networkService.fetch(endpoint: .news) { [weak self] result in
-        networkService.fetch { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                    case .success(let news):
-                        self?.bankNews = news
-//                        guard let bankNews = self?.bankNews else { return }
-//                        print(bankNews.count)
-//                        print(bankNews[0].title)
-//                        print(bankNews[0].mainText)
-//                        print(bankNews[0].date)
-//                        print(bankNews[0].imageName)
-                        self?.newsTableView.reloadData()
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                        self?.showConnectionErrorView()
-                }
-                self?.activityIndicator.stopAnimating()
-            }
-        }
-    }
+//    private func fetchNews() {
+////        print(#function)
+//        bankNews = []
+//        activityIndicator.startAnimating()
+////        networkService.fetch(endpoint: .news) { [weak self] result in
+//        networkService.fetch { [weak self] result in
+//            DispatchQueue.main.async {
+//                switch result {
+//                    case .success(let news):
+//                        self?.bankNews = news
+////                        guard let bankNews = self?.bankNews else { return }
+////                        print(bankNews.count)
+////                        print(bankNews[0].title)
+////                        print(bankNews[0].mainText)
+////                        print(bankNews[0].date)
+////                        print(bankNews[0].imageName)
+//                        self?.newsTableView.reloadData()
+//                    case .failure(let error):
+//                        print(error.localizedDescription)
+//                        self?.showConnectionErrorView()
+//                }
+//                self?.activityIndicator.stopAnimating()
+//            }
+//        }
+//    }
 
-    private func showConnectionErrorView() {
-        noConnectionView.isHidden = false
-        view.bringSubviewToFront(noConnectionView)
-    }
+//    private func showConnectionErrorView() {
+//        noConnectionView.isHidden = false
+//        view.bringSubviewToFront(noConnectionView)
+//    }
 
     // MARK: - Actions
     @objc private func retryNetworkCall() {
@@ -174,7 +210,7 @@ final class MainPageViewController: UIViewController {
         UIView.animate(withDuration: 0.3) {
             self.noConnectionView.isHidden = true
         }
-        fetchNews()
+        viewModel.fetchNews()
     }
 }
 
